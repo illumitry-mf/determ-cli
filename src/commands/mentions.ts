@@ -45,11 +45,11 @@ function buildBody(options: MentionsOptions, scrollToken?: string): MentionsRequ
     body.query.mentionFilter = mentionFilter as MentionsRequest['query']['mentionFilter']
   }
 
-  if (options.from || options.to) {
-    body.query.feedTime = {
-      from: options.from ? parseDate(options.from) : 0,
-      to: options.to ? parseDate(options.to) : Date.now(),
-    }
+  // Always include feedTime — the API returns 502 when omitted.
+  // Default: last 7 days → now when no range is specified.
+  body.query.feedTime = {
+    from: options.from ? parseDate(options.from) : Date.now() - 7 * 24 * 60 * 60 * 1000,
+    to: options.to ? parseDate(options.to) : Date.now(),
   }
 
   return body
