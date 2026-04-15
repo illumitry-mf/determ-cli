@@ -63,7 +63,7 @@ Every command supports these flags:
 Fetch mentions from a keyword or group using the scroll API.
 
 ```bash
-# By keyword ID (no group ID needed)
+# By keyword ID
 determ mentions --keyword 6798574
 
 # By group ID (all keywords in the group)
@@ -78,8 +78,8 @@ determ mentions --keyword 6798574 --count 10
 # Paginate through all results
 determ mentions --keyword 6798574 --all
 
-# Filter by date range (ISO 8601 or relative)
-determ mentions --keyword 6798574 --from 7d --to now
+# Filter by date range (ISO 8601 or relative; default window is last 7 days)
+determ mentions --keyword 6798574 --from 7d
 determ mentions --keyword 6798574 --from 2026-04-01 --to 2026-04-15
 
 # Filter by sentiment
@@ -98,7 +98,7 @@ determ mentions --keyword 6798574 --fields id,title,url,autoSentiment,reach
 # Get raw JSON
 determ mentions --keyword 6798574 --json
 
-# Combine filters
+# Combine filters (--count sets page size; --all fetches all pages)
 determ mentions --keyword 6798574 --from 24h --sentiment POSITIVE --count 50 --all
 ```
 
@@ -108,8 +108,8 @@ determ mentions --keyword 6798574 --from 24h --sentiment POSITIVE --count 50 --a
 |---|---|---|
 | `--keyword <id>` | — | Keyword ID (required if no `--group`) |
 | `--group <id>` | — | Group ID (required if no `--keyword`) |
-| `--from <date>` | — | Start date: ISO 8601 or relative (`24h`, `7d`, `30d`) |
-| `--to <date>` | — | End date: ISO 8601 or relative |
+| `--from <date>` | last 7 days | Start date: ISO 8601 or relative (`24h`, `7d`, `30d`) |
+| `--to <date>` | now | End date: ISO 8601 or relative |
 | `--sentiment <value>` | — | `POSITIVE` \| `NEGATIVE` \| `NEUTRAL` \| `UNDEFINED` |
 | `--type <value>` | — | `WEB` \| `TWITTER` \| `INSTAGRAM` \| `REDDIT` \| `YOUTUBE` \| `FACEBOOK` \| `FORUM` \| `COMMENT` \| `DISQUS` \| `TRIPADVISOR` \| `VKONTAKTE` |
 | `--tag <id>` | — | Tag ID (use `determ tags` to find IDs) |
@@ -120,7 +120,7 @@ determ mentions --keyword 6798574 --from 24h --sentiment POSITIVE --count 50 --a
 
 **Mention fields available for `--fields`:**
 
-Core: `id`, `type`, `title`, `url`, `from`, `author`, `autoSentiment`, `reach`, `interaction`, `influenceScore`, `description`, `insertTime`, `databaseInsertTime`, `languages`, `locations`, `keywords`, `keywordId`, `keywordName`, `groupId`, `groupName`
+Core: `id`, `type`, `title`, `url`, `from`, `author`, `autoSentiment`, `reach`, `virality`, `interaction`, `influenceScore`, `description`, `insertTime`, `databaseInsertTime`, `languages`, `locations`, `keywords`, `keywordId`, `keywordName`, `groupId`, `groupName`
 
 Twitter-specific: `retweetCount`, `favoriteCount`, `replyCount`, `quoteCount`, `followersCount`, `twitterHandle`, `engagementRate`, `prValue`, `tweetType`
 
@@ -157,4 +157,4 @@ Tags are used for filtering mentions with `determ mentions --tag <id>`.
 - Use `--all` carefully with large date ranges — it will paginate until exhausted. Combine with `--from 24h` for daily briefs.
 - Use `--json` and pipe to `jq` when you need to extract specific fields programmatically: `determ mentions --keyword 6798574 --json | jq '.mentions[].url'`
 - To find tag IDs: run `determ tags` first, note the IDs, then use `--tag <id>` in your mentions query.
-- `--count 100` is the practical maximum per page; the API may return fewer depending on filters.
+- `--count 100` is the practical maximum per page; the API may return fewer depending on filters and enforces its own server-side cap.
