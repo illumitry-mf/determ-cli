@@ -8,6 +8,7 @@
     "determ": "dist/cli.js"
   },
   "scripts": {
+    "prepare": "tsc && chmod +x dist/cli.js",
     "build": "tsc && chmod +x dist/cli.js",
     "dev": "ts-node src/cli.ts",
     "test": "vitest run",
