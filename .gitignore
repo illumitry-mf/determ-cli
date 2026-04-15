@@ -4,3 +4,10 @@ dist/
 *.tsbuildinfo
 .DS_Store
 superpowers
+
+# Reference materials
+Determ\ API_V2.postman_collection.json
+Determ\ APIv2\ -\ Guide.pdf
+response\ examples.zip
+response_examples/
+project\ config\ details.md
