@@ -26,7 +26,7 @@ Output defaults to **TOON format** (Token-Oriented Object Notation) — a compac
 
 ## Authentication & Setup
 
-Credentials are resolved in priority order: CLI flags → environment variables → `~/.determ-cli.json`.
+Credentials are resolved in priority order: CLI flags → environment variables → `~/.config/determ-cli/.determ-cli.json`.
 
 ```bash
 # Recommended: set environment variables
@@ -37,7 +37,7 @@ export DETERM_ORG_ID=your_org_id
 determ mentions --keyword 6798574 --token your_token --org 177561
 ```
 
-Config file format (`~/.determ-cli.json`):
+Config file format (`~/.config/determ-cli/.determ-cli.json`):
 ```json
 {
   "accessToken": "your_access_token",

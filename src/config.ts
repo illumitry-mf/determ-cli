@@ -3,7 +3,7 @@ import os from 'os'
 import path from 'path'
 import { DetermConfig, ConfigOptions } from './types'
 
-const CONFIG_FILE = path.join(os.homedir(), '.determ-cli.json')
+const CONFIG_FILE = path.join(os.homedir(), '.config', 'determ-cli', '.determ-cli.json')
 
 export function resolveConfig(options: ConfigOptions): DetermConfig {
   let fileConfig: Partial<DetermConfig> = {}
@@ -22,12 +22,12 @@ export function resolveConfig(options: ConfigOptions): DetermConfig {
 
   if (!accessToken) {
     throw new Error(
-      'Access token required. Set DETERM_ACCESS_TOKEN, use --token, or add accessToken to ~/.determ-cli.json'
+      'Access token required. Set DETERM_ACCESS_TOKEN, use --token, or add accessToken to ~/.config/determ-cli/.determ-cli.json'
     )
   }
   if (!orgId) {
     throw new Error(
-      'Org ID required. Set DETERM_ORG_ID, use --org, or add orgId to ~/.determ-cli.json'
+      'Org ID required. Set DETERM_ORG_ID, use --org, or add orgId to ~/.config/determ-cli/.determ-cli.json'
     )
   }
 
