@@ -1,0 +1,41 @@
+{
+    "mentions": [
+        {
+            "id": 155575803,
+            "type": "tiktok",
+            "mention": "",
+            "languages": [
+                "en"
+            ],
+            "from": "nike",
+            "author": "nike",
+            "insertTime": 1696819671,
+            "title": "Nike Well Collective Trainer, Mckenna Thornlow, shares some #pilates tips for anyone in their #pilatesera 😌🧘‍♀️",
+            "url": "https://www.tiktok.com/@nike/video/7287784924231355690",
+            "reach": 6034,
+            "databaseInsertTime": 1696837567,
+            "keywords": [],
+            "locations": [
+                "US"
+            ],
+            "autoSentiment": "positive",
+            "interaction": 255,
+            "influenceScore": 1,
+            "tiktokId": "7287784924231355690",
+            "diggCount": 243,
+            "shareCount": 0,
+            "commentCount": 12,
+            "playCount": 6034,
+            "videoDurationSeconds": 63,
+            "authorFollowerCount": 4900000,
+            "tagFeedLocations": [],
+            "keywordId": 6682381,
+            "keywordName": "NIKE",
+            "groupId": 229131,
+            "groupName": "NIKE",
+            "keywordNames": [
+                "NIKE"
+            ]
+        }
+    ]
+}

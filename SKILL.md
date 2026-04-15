@@ -1,6 +1,6 @@
 ---
 name: determ
-description: Fetch media mentions and tags from the Determ (Mediatoolkit) media monitoring API using the `determ` CLI. Use to retrieve press coverage, social media mentions, sentiment analysis, and tag listings for PR monitoring workflows.
+description: Fetch media mentions, list groups/topics, and list tags from the Determ (Mediatoolkit) media monitoring API using the `determ` CLI. Use to discover group and topic IDs, retrieve press coverage, social media mentions, sentiment analysis, and tag listings for PR monitoring workflows.
 user-invocable: true
 metadata:
   openclaw:
@@ -20,7 +20,7 @@ metadata:
 
 # determ CLI
 
-You have access to the `determ` CLI — a command-line tool for the Determ (Mediatoolkit) media monitoring API. Use it to fetch press and social media mentions and list tags for a PR agency's monitoring workflows.
+You have access to the `determ` CLI — a command-line tool for the Determ (Mediatoolkit) media monitoring API. Use it to discover groups and topics, fetch press and social media mentions, and list tags for a PR agency's monitoring workflows.
 
 Output defaults to **TOON format** (Token-Oriented Object Notation) — a compact, LLM-optimised encoding that uses ~40% fewer tokens than JSON. Use `--json` when you need structured data to pass to other tools.
 
@@ -126,6 +126,29 @@ Twitter-specific: `retweetCount`, `favoriteCount`, `replyCount`, `quoteCount`, `
 
 Reddit-specific: `subreddit`, `redditType`, `redditScore`
 
+### `determ groups`
+
+List all groups (campaigns) and their topics (keywords) — **run this first to discover IDs** before using `mentions`.
+
+> In the Determ UI, "groups" are campaigns and "keywords" are called "topics".
+
+```bash
+# List all groups and topics
+determ groups
+
+# JSON output
+determ groups --json
+
+# Only group/topic IDs and names
+determ groups --fields id,name
+```
+
+**Output fields:** `id`, `name`, `topics` (array of `{ id, name, active }`)
+
+Use the IDs here in `determ mentions --keyword <id>` or `--group <id>`.
+
+---
+
 ### `determ tags`
 
 List all tags defined in the organisation.
@@ -156,5 +179,6 @@ Tags are used for filtering mentions with `determ mentions --tag <id>`.
 - Use `--fields id,title,url,autoSentiment` for a concise summary pass to an LLM before deciding which mentions to analyse fully.
 - Use `--all` carefully with large date ranges — it will paginate until exhausted. Combine with `--from 24h` for daily briefs.
 - Use `--json` and pipe to `jq` when you need to extract specific fields programmatically: `determ mentions --keyword 6798574 --json | jq '.mentions[].url'`
+- **Start with `determ groups`** to discover all group and topic IDs — you need these for `determ mentions`.
 - To find tag IDs: run `determ tags` first, note the IDs, then use `--tag <id>` in your mentions query.
 - `--count 100` is the practical maximum per page; the API may return fewer depending on filters and enforces its own server-side cap.

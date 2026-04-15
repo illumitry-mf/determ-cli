@@ -168,3 +168,44 @@ export interface TagsCommandOptions {
   json?: boolean
   fields?: string[]
 }
+
+// v1 Groups API (used for discovery — no v2 equivalent exists)
+export interface V1Topic {
+  id: number
+  name: string
+  group_id: number
+  active: boolean
+  color?: string
+}
+
+export interface V1Group {
+  id: number
+  name: string
+  color?: string
+  keywords: V1Topic[]
+}
+
+export interface V1GroupsResponse {
+  message: string
+  data: {
+    groups: V1Group[]
+  }
+}
+
+// Normalised shapes for output
+export interface Topic {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface Group {
+  id: number
+  name: string
+  topics: Topic[]
+}
+
+export interface GroupsCommandOptions {
+  json?: boolean
+  fields?: string[]
+}

@@ -5,6 +5,7 @@ import { resolveConfig } from './config'
 import { createClient } from './client'
 import { fetchMentions } from './commands/mentions'
 import { fetchTags } from './commands/tags'
+import { fetchGroups } from './commands/groups'
 
 dotenv.config()
 
@@ -77,6 +78,31 @@ program
         ? options.fields.split(',').map((f: string) => f.trim()).filter(Boolean)
         : undefined
       const output = await fetchTags(client, config.orgId, {
+        json: options.json,
+        fields,
+      })
+      console.log(output)
+    } catch (err: unknown) {
+      console.error(`Error: ${(err as Error).message}`)
+      process.exit(1)
+    }
+  })
+
+program
+  .command('groups')
+  .description('List all groups (campaigns) and their topics (keywords) for the organisation')
+  .option('--org <id>', 'Organisation ID (overrides DETERM_ORG_ID env var)')
+  .option('--token <key>', 'Access token (overrides DETERM_ACCESS_TOKEN env var)')
+  .option('--fields <fields>', 'Comma-separated fields to include (default: all)')
+  .option('--json', 'Output raw JSON instead of TOON')
+  .action(async (options) => {
+    try {
+      const config = resolveConfig({ token: options.token, org: options.org })
+      const client = createClient(config.accessToken)
+      const fields = options.fields
+        ? options.fields.split(',').map((f: string) => f.trim()).filter(Boolean)
+        : undefined
+      const output = await fetchGroups(client, config.orgId, {
         json: options.json,
         fields,
       })
