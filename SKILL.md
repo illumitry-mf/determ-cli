@@ -7,7 +7,7 @@ metadata:
     requires:
       bins:
         - determ
-      install: "npm install -g determ-cli"
+      install: "npm install -g illumitry-mf/determ-cli"
     keywords:
       - media monitoring
       - PR
