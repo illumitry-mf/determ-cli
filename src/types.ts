@@ -209,3 +209,38 @@ export interface GroupsCommandOptions {
   json?: boolean
   fields?: string[]
 }
+
+// v1 Update Mention
+export interface MentionRef {
+  mention_id: number
+  source_type: string
+}
+
+export interface UpdateMentionRequest {
+  selected_mention_ids: MentionRef[]
+  tag_id?: number
+  category_id?: number
+  irrelevant?: boolean
+  sentiment?: 'positive' | 'negative' | 'neutral'
+  keyword_id?: number
+}
+
+export interface UpdateMentionResponse {
+  code: number
+  message: string
+  data: {
+    message_code: string
+    message_transformed: string
+  }
+}
+
+export interface UpdateMentionOptions {
+  group: string
+  mentions: string     // "mentionId:sourceType,..." comma-separated pairs
+  tagId?: string
+  categoryId?: string
+  irrelevant?: boolean
+  sentiment?: string
+  keyword?: string
+  json?: boolean
+}
