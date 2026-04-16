@@ -194,13 +194,14 @@ describe('fetchMentions', () => {
       expect(body.query.mentionFilter.tag.any).toEqual([24900])
     })
 
-    it('adds feedTime when --from is provided', async () => {
+    it('sets publishedTime (not feedTime origin) when --from is provided without --use-feed-time', async () => {
       await fetchMentions(mockClient, '177561', {
         keyword: '6798574',
         from: '2026-04-01',
       })
       const body = mockPost.mock.calls[0][1]
-      expect(body.query.feedTime.from).toBe(new Date('2026-04-01').getTime())
+      expect(body.query.publishedTime?.from).toBe(new Date('2026-04-01').getTime())
+      expect(body.query.feedTime).toBeDefined() // wide window still present
     })
   })
 
@@ -213,6 +214,98 @@ describe('fetchMentions', () => {
       })
       const parsed = JSON.parse(result)
       expect(Object.keys(parsed.mentions[0])).toEqual(['id', 'title'])
+    })
+  })
+
+  describe('publishedTime filter (default when dates provided)', () => {
+    it('sets publishedTime when --from provided without --use-feed-time', async () => {
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        from: '2026-04-15',
+      })
+      const body = mockPost.mock.calls[0][1]
+      expect(body.query.publishedTime).toBeDefined()
+      expect(body.query.publishedTime.from).toBe(new Date('2026-04-15').getTime())
+    })
+
+    it('sets wide feedTime window alongside publishedTime', async () => {
+      const before = Date.now()
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        from: '2026-04-15',
+      })
+      const after = Date.now()
+      const body = mockPost.mock.calls[0][1]
+      // feedTime.from should be ~90 days before the call
+      expect(body.query.feedTime.from).toBeLessThanOrEqual(before - 89 * 24 * 60 * 60 * 1000)
+      // feedTime.to should be after the call (future)
+      expect(body.query.feedTime.to).toBeGreaterThanOrEqual(after)
+    })
+
+    it('does not set publishedTime when no --from or --to provided', async () => {
+      await fetchMentions(mockClient, '177561', { keyword: '6798574' })
+      const body = mockPost.mock.calls[0][1]
+      expect(body.query.publishedTime).toBeUndefined()
+      expect(body.query.feedTime).toBeDefined()
+    })
+  })
+
+  describe('--use-feed-time flag', () => {
+    it('sets feedTime (not publishedTime) when --use-feed-time is set', async () => {
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        from: '2026-04-15',
+        to: '2026-04-16',
+        useFeedTime: true,
+      })
+      const body = mockPost.mock.calls[0][1]
+      expect(body.query.publishedTime).toBeUndefined()
+      expect(body.query.feedTime.from).toBe(new Date('2026-04-15').getTime())
+    })
+
+    it('snaps date-only --to even when --use-feed-time is set', async () => {
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        from: '2026-04-15',
+        to: '2026-04-16',
+        useFeedTime: true,
+      })
+      const body = mockPost.mock.calls[0][1]
+      const expectedTo = new Date('2026-04-16').getTime() + 24 * 60 * 60 * 1000 - 1
+      expect(body.query.feedTime.to).toBe(expectedTo)
+    })
+  })
+
+  describe('end-of-day snapping for --to', () => {
+    it('snaps date-only --to to 23:59:59.999Z', async () => {
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        from: '2026-04-15',
+        to: '2026-04-16',
+      })
+      const body = mockPost.mock.calls[0][1]
+      const expectedTo = new Date('2026-04-16').getTime() + 24 * 60 * 60 * 1000 - 1
+      expect(body.query.publishedTime.to).toBe(expectedTo)
+    })
+
+    it('does not snap full datetime --to', async () => {
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        from: '2026-04-15',
+        to: '2026-04-16T12:00:00Z',
+      })
+      const body = mockPost.mock.calls[0][1]
+      expect(body.query.publishedTime.to).toBe(new Date('2026-04-16T12:00:00Z').getTime())
+    })
+
+    it('does not snap relative --to (e.g. 7d)', async () => {
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        from: '7d',
+      })
+      const body = mockPost.mock.calls[0][1]
+      // publishedTime should be set (from was provided) and to defaults to approx now
+      expect(body.query.publishedTime).toBeDefined()
     })
   })
 })

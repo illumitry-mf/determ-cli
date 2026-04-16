@@ -3,6 +3,14 @@ import { MentionsRequest, MentionsResponse, MentionsOptions } from '../types'
 import { formatOutput } from '../formatters'
 import { parseDate } from '../utils/date'
 
+function isDateOnly(input: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(input)
+}
+
+function snapToEndOfDay(ms: number): number {
+  return ms + 24 * 60 * 60 * 1000 - 1
+}
+
 function buildEndpoint(orgId: string, keyword?: string, group?: string): string {
   if (keyword && group) {
     return `/v2/organization/${orgId}/group/${group}/keyword/${keyword}/mentions/scroll`
@@ -45,11 +53,42 @@ function buildBody(options: MentionsOptions, scrollToken?: string): MentionsRequ
     body.query.mentionFilter = mentionFilter as MentionsRequest['query']['mentionFilter']
   }
 
-  // Always include feedTime — the API returns 502 when omitted.
-  // Default: last 7 days → now when no range is specified.
-  body.query.feedTime = {
-    from: options.from ? parseDate(options.from) : Date.now() - 7 * 24 * 60 * 60 * 1000,
-    to: options.to ? parseDate(options.to) : Date.now(),
+  const now = Date.now()
+  const fromMs = options.from ? parseDate(options.from) : null
+  let toMs = options.to ? parseDate(options.to) : null
+
+  // Snap bare YYYY-MM-DD --to values to end-of-day (23:59:59.999Z).
+  // Full datetimes and relative inputs are left unchanged.
+  if (toMs !== null && options.to && isDateOnly(options.to)) {
+    toMs = snapToEndOfDay(toMs)
+  }
+
+  if (fromMs !== null || toMs !== null) {
+    if (options.useFeedTime) {
+      // Explicit crawl-date filtering: feedTime = from→to, no publishedTime.
+      body.query.feedTime = {
+        from: fromMs ?? now - 7 * 24 * 60 * 60 * 1000,
+        to: toMs ?? now,
+      }
+    } else {
+      // Default: filter by publish date.
+      // feedTime must always be present (API returns 502 without it);
+      // use a wide window that will never exclude a relevant crawl.
+      body.query.publishedTime = {
+        from: fromMs ?? now - 7 * 24 * 60 * 60 * 1000,
+        to: toMs ?? now,
+      }
+      body.query.feedTime = {
+        from: now - 90 * 24 * 60 * 60 * 1000,
+        to: now + 24 * 60 * 60 * 1000,
+      }
+    }
+  } else {
+    // No date filter provided: use feedTime last 7 days (unchanged default).
+    body.query.feedTime = {
+      from: now - 7 * 24 * 60 * 60 * 1000,
+      to: now,
+    }
   }
 
   return body
