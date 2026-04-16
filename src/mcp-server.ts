@@ -114,11 +114,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             description:
               'Filter by crawl/ingestion date instead of publish date (default: publish date)',
           },
-          include_full_text: {
-            type: 'boolean',
-            description:
-              'Include full article/post text in results. By default fullText is empty; set this to true to retrieve the complete body.',
-          },
         },
         required: [],
       },
@@ -229,7 +224,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         sortDir: args.sortDir as string | undefined,
         fields: parseFields(args.fields),
         useFeedTime: args.use_feed_time as boolean | undefined,
-        fullText: args.include_full_text as boolean | undefined,
         json: args.json as boolean | undefined,
       })
     } else if (name === 'determ_tags') {

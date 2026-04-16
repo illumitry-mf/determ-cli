@@ -88,9 +88,8 @@ determ mentions --keyword 6798574 --from 2026-04-01 --to 2026-04-15
 # Filter by crawl/ingestion date instead
 determ mentions --keyword 6798574 --from 2026-04-01 --to 2026-04-15 --use-feed-time
 
-# Include full article/post text
-determ mentions --keyword 6798574 --full-text
-determ mentions --keyword 6798574 --full-text --fields id,title,url,fullText
+# Include full article/post text (automatically fetched when fullText is in --fields)
+determ mentions --keyword 6798574 --fields id,title,url,fullText
 
 # Filter by sentiment
 determ mentions --keyword 6798574 --sentiment NEGATIVE
@@ -128,7 +127,6 @@ determ mentions --keyword 6798574 --from 24h --sentiment POSITIVE --count 50 --a
 | `--sort-by <property>` | `FEED_TIME` | `PUBLISHED_TIME` \| `FEED_TIME` \| `REACH` \| `VIRALITY` |
 | `--sort-dir <dir>` | `DESC` | `ASC` \| `DESC` |
 | `--use-feed-time` | false | Filter by crawl/ingestion date instead of publish date |
-| `--full-text` | false | Include full article/post text (API returns empty `fullText` without this) |
 
 **Mention fields available for `--fields`:**
 

@@ -37,7 +37,7 @@ function buildBody(options: MentionsOptions, scrollToken?: string): MentionsRequ
     body.scrollToken = scrollToken
   }
 
-  if (options.fullText) {
+  if (options.fields?.includes('fullText')) {
     body.includeFullText = true
   }
 

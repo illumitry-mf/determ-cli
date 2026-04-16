@@ -163,7 +163,6 @@ export interface MentionsOptions {
   sortBy?: string
   sortDir?: string
   useFeedTime?: boolean
-  fullText?: boolean
   json?: boolean
 }
 
