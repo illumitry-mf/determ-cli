@@ -70,6 +70,10 @@ export async function updateMentions(
   const endpoint = `/organizations/${orgId}/groups/${options.group}/mentions/meta`
   const { data } = await client.post<UpdateMentionResponse>(endpoint, body)
 
+  if (data.data?.message_code && data.data.message_code !== 'OK') {
+    throw new Error(`API error: ${data.data.message_code}`)
+  }
+
   if (options.json) {
     return JSON.stringify(data, null, 2)
   }

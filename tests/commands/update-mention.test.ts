@@ -196,6 +196,23 @@ describe('updateMentions', () => {
     expect(parsed.message).toBe('OK')
   })
 
+  it('throws when API returns a non-OK message_code', async () => {
+    mockPost.mockResolvedValue({
+      data: {
+        code: 0,
+        message: 'ERROR',
+        data: { message_code: 'PERMISSION_DENIED', message_transformed: 'permission denied' },
+      },
+    })
+    await expect(
+      updateMentions(mockClient, '177561', {
+        group: '250240',
+        mentions: '123:web',
+        irrelevant: true,
+      })
+    ).rejects.toThrow('PERMISSION_DENIED')
+  })
+
   it('propagates HTTP errors from client.post', async () => {
     mockPost.mockRejectedValue(new Error('500 Internal Server Error'))
     await expect(
