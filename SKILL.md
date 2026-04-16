@@ -222,7 +222,7 @@ At least one of `--tag-id`, `--irrelevant`, or `--sentiment` must be provided.
 
 ## Key concepts
 
-**feedTime vs publishedTime:** `--from`/`--to` filter by `publishedTime` (when the source originally published) by default — the right axis for PR coverage queries. Use `--use-feed-time` to filter by `feedTime` (when Determ ingested the mention) for real-time monitoring or crawl-date-specific queries. The API requires `feedTime` to be present; when filtering by `publishedTime`, a wide 90-day window is sent automatically.
+**feedTime vs publishedTime:** `--from`/`--to` filter by `publishedTime` (when the source originally published) by default — the right axis for PR coverage queries. Use `--use-feed-time` to filter by `feedTime` (when Determ ingested the mention) for real-time monitoring or crawl-date-specific queries. The API requires `feedTime` to be present; when filtering by `publishedTime`, a wide 90-day window is sent automatically. When no `--from`/`--to` is provided at all, the default is a 7-day `feedTime` window (crawl date); specify `--from 7d` explicitly to apply the same range via `publishedTime` instead.
 
 **Keyword vs Group:** A keyword tracks a specific search term. A group contains multiple keywords. Use `--keyword` for a focused query; use `--group` for all coverage across a campaign.
 
