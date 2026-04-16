@@ -11,6 +11,7 @@ import { createClient } from './client'
 import { fetchMentions } from './commands/mentions'
 import { fetchTags } from './commands/tags'
 import { fetchGroups } from './commands/groups'
+import { updateMentions } from './commands/update-mention'
 
 dotenv.config()
 
@@ -130,6 +131,55 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: [],
       },
     },
+    {
+      name: 'determ_update_mention',
+      description:
+        'Tag, mark irrelevant, or change sentiment on one or more Determ mentions. ' +
+        'Requires group ID and at least one operation (tag_id, irrelevant, or sentiment). ' +
+        'Use determ_groups to find group IDs and determ_tags to find tag IDs.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          group: {
+            type: 'string',
+            description: 'Group ID (required — used in API path)',
+          },
+          mentions: {
+            type: 'string',
+            description:
+              'Comma-separated mentionId:sourceType pairs (e.g. "123:web,456:twitter"). ' +
+              'Source types: web, twitter, instagram, facebook, reddit, youtube, forum, ' +
+              'comment, disqus, vkontakte, trip_advisor',
+          },
+          tag_id: {
+            type: 'number',
+            description: 'Tag ID to apply to the mention(s)',
+          },
+          category_id: {
+            type: 'number',
+            description: 'Tag category ID (used alongside tag_id)',
+          },
+          irrelevant: {
+            type: 'boolean',
+            description: 'Mark mention(s) as irrelevant (removes from feed)',
+          },
+          sentiment: {
+            type: 'string',
+            enum: ['positive', 'negative', 'neutral'],
+            description: 'Override the sentiment on the mention(s)',
+          },
+          keyword: {
+            type: 'string',
+            description: 'Keyword ID to scope the update to one keyword feed',
+          },
+          json: {
+            type: 'boolean',
+            description: 'Return raw JSON response',
+          },
+        },
+        required: ['group', 'mentions'],
+      },
+    },
   ],
 }))
 
@@ -174,6 +224,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       output = await fetchTags(client, config.orgId, {
         json: args.json as boolean | undefined,
         fields: parseFields(args.fields),
+      })
+    } else if (name === 'determ_update_mention') {
+      if (!args.group) throw new Error('"group" is required')
+      if (!args.mentions) throw new Error('"mentions" is required')
+      output = await updateMentions(client, config.orgId, {
+        group: args.group as string,
+        mentions: args.mentions as string,
+        tagId: args.tag_id !== undefined ? String(args.tag_id) : undefined,
+        categoryId: args.category_id !== undefined ? String(args.category_id) : undefined,
+        irrelevant: args.irrelevant as boolean | undefined,
+        sentiment: args.sentiment as string | undefined,
+        keyword: args.keyword as string | undefined,
+        json: args.json as boolean | undefined,
       })
     } else {
       throw new Error(`Unknown tool: ${name}`)
