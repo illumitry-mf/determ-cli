@@ -93,7 +93,7 @@ determ mentions --keyword 6798574 --type WEB
 determ mentions --keyword 6798574 --tag 24900
 
 # Select specific fields
-determ mentions --keyword 6798574 --fields id,title,url,autoSentiment,reach
+determ mentions --keyword 6798574 --fields id,title,url,fullText,autoSentiment,reach
 
 # Get raw JSON
 determ mentions --keyword 6798574 --json
@@ -120,7 +120,7 @@ determ mentions --keyword 6798574 --from 24h --sentiment POSITIVE --count 50 --a
 
 **Mention fields available for `--fields`:**
 
-Core: `id`, `type`, `title`, `url`, `from`, `author`, `autoSentiment`, `reach`, `virality`, `interaction`, `influenceScore`, `description`, `insertTime`, `databaseInsertTime`, `languages`, `locations`, `keywords`, `keywordId`, `keywordName`, `groupId`, `groupName`
+Core: `id`, `type`, `title`, `url`, `fullText`, `from`, `author`, `autoSentiment`, `reach`, `virality`, `interaction`, `influenceScore`, `description`, `insertTime`, `databaseInsertTime`, `languages`, `locations`, `keywords`, `keywordId`, `keywordName`, `groupId`, `groupName`
 
 Twitter-specific: `retweetCount`, `favoriteCount`, `replyCount`, `quoteCount`, `followersCount`, `twitterHandle`, `engagementRate`, `prValue`, `tweetType`
 
@@ -176,7 +176,7 @@ Tags are used for filtering mentions with `determ mentions --tag <id>`.
 
 ## Tips
 
-- Use `--fields id,title,url,autoSentiment` for a concise summary pass to an LLM before deciding which mentions to analyse fully.
+- Use `--fields id,title,url,fullText,autoSentiment` for a concise summary pass to an LLM before deciding which mentions to analyse fully.
 - Use `--all` carefully with large date ranges — it will paginate until exhausted. Combine with `--from 24h` for daily briefs.
 - Use `--json` and pipe to `jq` when you need to extract specific fields programmatically: `determ mentions --keyword 6798574 --json | jq '.mentions[].url'`
 - **Start with `determ groups`** to discover all group and topic IDs — you need these for `determ mentions`.

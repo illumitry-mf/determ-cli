@@ -102,7 +102,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           fields: {
             type: 'string',
             description:
-              'Comma-separated fields to return (e.g. "id,title,url,autoSentiment,reach")',
+              'Comma-separated fields to return (e.g. "id,title,url,fullText,autoSentiment,reach")',
           },
           json: {
             type: 'boolean',
