@@ -56,6 +56,7 @@ export interface MentionsRequest {
   query: MentionsQuery
   paged: PagedRequest
   scrollToken?: string
+  includeFullText?: boolean
 }
 
 // Response shapes
@@ -162,6 +163,7 @@ export interface MentionsOptions {
   sortBy?: string
   sortDir?: string
   useFeedTime?: boolean
+  fullText?: boolean
   json?: boolean
 }
 

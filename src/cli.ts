@@ -35,6 +35,7 @@ program
   .option('--sort-by <property>', 'Sort by: PUBLISHED_TIME | FEED_TIME | REACH | VIRALITY', 'FEED_TIME')
   .option('--sort-dir <direction>', 'Sort direction: ASC | DESC', 'DESC')
   .option('--use-feed-time', 'Filter by crawl/ingestion date instead of publish date (default: publish date)')
+  .option('--full-text', 'Include full article text in results')
   .option('--json', 'Output raw JSON instead of TOON')
   .action(async (options) => {
     try {
@@ -57,6 +58,7 @@ program
         sortBy: options.sortBy,
         sortDir: options.sortDir,
         useFeedTime: options.useFeedTime,
+        fullText: options.fullText,
         json: options.json,
       })
       console.log(output)

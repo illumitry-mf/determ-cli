@@ -37,6 +37,10 @@ function buildBody(options: MentionsOptions, scrollToken?: string): MentionsRequ
     body.scrollToken = scrollToken
   }
 
+  if (options.fullText) {
+    body.includeFullText = true
+  }
+
   const mentionFilter: Record<string, unknown> = {}
 
   if (options.type) {
