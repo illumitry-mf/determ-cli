@@ -53,6 +53,10 @@ describe('parseMentions', () => {
   it('throws on non-numeric mention ID', () => {
     expect(() => parseMentions('abc:web')).toThrow('"abc"')
   })
+
+  it('throws on empty string', () => {
+    expect(() => parseMentions('')).toThrow()
+  })
 })
 
 describe('updateMentions', () => {
@@ -184,6 +188,28 @@ describe('updateMentions', () => {
       json: true,
     })
     const parsed = JSON.parse(result)
+    expect(parsed.code).toBe(1)
     expect(parsed.message).toBe('OK')
+  })
+
+  it('propagates HTTP errors from client.post', async () => {
+    mockPost.mockRejectedValue(new Error('500 Internal Server Error'))
+    await expect(
+      updateMentions(mockClient, '177561', {
+        group: '250240',
+        mentions: '123:web',
+        irrelevant: true,
+      })
+    ).rejects.toThrow('500 Internal Server Error')
+  })
+
+  it('omits category_id when categoryId is not provided', async () => {
+    await updateMentions(mockClient, '177561', {
+      group: '250240',
+      mentions: '123:web',
+      irrelevant: true,
+    })
+    const body = mockPost.mock.calls[0][1]
+    expect(body.category_id).toBeUndefined()
   })
 })
