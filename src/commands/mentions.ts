@@ -80,7 +80,7 @@ function buildBody(options: MentionsOptions, scrollToken?: string): MentionsRequ
       }
       body.query.feedTime = {
         from: now - 90 * 24 * 60 * 60 * 1000,
-        to: now + 24 * 60 * 60 * 1000,
+        to: now + 24 * 60 * 60 * 1000, // +24h buffer for crawl delay and timezone skew
       }
     }
   } else {

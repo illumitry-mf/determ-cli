@@ -263,6 +263,16 @@ describe('fetchMentions', () => {
       expect(body.query.feedTime.from).toBe(new Date('2026-04-15').getTime())
     })
 
+    it('useFeedTime with no dates falls back to 7-day feedTime default', async () => {
+      await fetchMentions(mockClient, '177561', {
+        keyword: '6798574',
+        useFeedTime: true,
+      })
+      const body = mockPost.mock.calls[0][1]
+      expect(body.query.publishedTime).toBeUndefined()
+      expect(body.query.feedTime).toBeDefined()
+    })
+
     it('snaps date-only --to even when --use-feed-time is set', async () => {
       await fetchMentions(mockClient, '177561', {
         keyword: '6798574',
