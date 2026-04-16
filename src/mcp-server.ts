@@ -226,8 +226,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         fields: parseFields(args.fields),
       })
     } else if (name === 'determ_update_mention') {
-      if (!args.group) throw new Error('"group" is required')
-      if (!args.mentions) throw new Error('"mentions" is required')
       output = await updateMentions(client, config.orgId, {
         group: args.group as string,
         mentions: args.mentions as string,
