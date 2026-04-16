@@ -6,6 +6,7 @@ import { createClient } from './client'
 import { fetchMentions } from './commands/mentions'
 import { fetchTags } from './commands/tags'
 import { fetchGroups } from './commands/groups'
+import { updateMentions } from './commands/update-mention'
 
 dotenv.config()
 
@@ -105,6 +106,43 @@ program
       const output = await fetchGroups(client, config.orgId, {
         json: options.json,
         fields,
+      })
+      console.log(output)
+    } catch (err: unknown) {
+      console.error(`Error: ${(err as Error).message}`)
+      process.exit(1)
+    }
+  })
+
+program
+  .command('update-mention')
+  .description('Tag, mark irrelevant, or change sentiment on one or more mentions')
+  .requiredOption('--group <id>', 'Group ID (required — used in API path)')
+  .requiredOption(
+    '--mentions <pairs>',
+    'Comma-separated mentionId:sourceType pairs (e.g. "123:web,456:twitter")'
+  )
+  .option('--tag-id <id>', 'Tag ID to apply to the mention(s)')
+  .option('--category-id <id>', 'Tag category ID (used alongside --tag-id)')
+  .option('--irrelevant', 'Mark mention(s) as irrelevant (removes from feed)')
+  .option('--sentiment <value>', 'Set sentiment: positive | negative | neutral')
+  .option('--keyword <id>', 'Scope update to one keyword feed')
+  .option('--org <id>', 'Organisation ID (overrides DETERM_ORG_ID env var)')
+  .option('--token <key>', 'Access token (overrides DETERM_ACCESS_TOKEN env var)')
+  .option('--json', 'Output raw JSON response')
+  .action(async (options) => {
+    try {
+      const config = resolveConfig({ token: options.token, org: options.org })
+      const client = createClient(config.accessToken)
+      const output = await updateMentions(client, config.orgId, {
+        group: options.group,
+        mentions: options.mentions,
+        tagId: options.tagId,
+        categoryId: options.categoryId,
+        irrelevant: options.irrelevant,
+        sentiment: options.sentiment,
+        keyword: options.keyword,
+        json: options.json,
       })
       console.log(output)
     } catch (err: unknown) {
