@@ -130,6 +130,8 @@ determ mentions --keyword 6798574 --from 24h --sentiment POSITIVE --count 50 --a
 
 **Mention fields available for `--fields`:**
 
+> **Note:** `fullText` is empty by default. It is only populated when `fullText` is explicitly included in `--fields` (e.g. `--fields id,title,url,fullText`). All other fields are returned in full regardless of whether `--fields` is specified.
+
 Core: `id`, `type`, `title`, `url`, `fullText`, `from`, `author`, `autoSentiment`, `reach`, `virality`, `interaction`, `influenceScore`, `description`, `insertTime`, `databaseInsertTime`, `languages`, `locations`, `keywords`, `keywordId`, `keywordName`, `groupId`, `groupName`
 
 Twitter-specific: `retweetCount`, `favoriteCount`, `replyCount`, `quoteCount`, `followersCount`, `twitterHandle`, `engagementRate`, `prValue`, `tweetType`
