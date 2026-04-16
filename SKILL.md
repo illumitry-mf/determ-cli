@@ -1,6 +1,6 @@
 ---
 name: determ-cli
-description: Fetch media mentions, list groups/topics, and list tags from the Determ (Mediatoolkit) media monitoring API using the `determ` CLI. Use to discover group and topic IDs, retrieve press coverage, social media mentions, sentiment analysis, and tag listings for PR monitoring workflows.
+description: Fetch media mentions, update mention metadata (tag, mark irrelevant, change sentiment), list groups/topics, and list tags from the Determ (Mediatoolkit) media monitoring API using the `determ` CLI. Use to discover group and topic IDs, retrieve press coverage, social media mentions, sentiment analysis, and tag listings for PR monitoring workflows.
 user-invocable: true
 metadata:
   openclaw:
@@ -16,11 +16,14 @@ metadata:
       - mediatoolkit
       - sentiment
       - social media
+      - tag mention
+      - irrelevant
+      - update mention
 ---
 
 # determ CLI
 
-You have access to the `determ` CLI — a command-line tool for the Determ (Mediatoolkit) media monitoring API. Use it to discover groups and topics, fetch press and social media mentions, and list tags for a PR agency's monitoring workflows.
+You have access to the `determ` CLI — a command-line tool for the Determ (Mediatoolkit) media monitoring API. Use it to discover groups and topics, fetch press and social media mentions, update mention metadata (tag, mark irrelevant, change sentiment), and list tags for a PR agency's monitoring workflows.
 
 Output defaults to **TOON format** (Token-Oriented Object Notation) — a compact, LLM-optimised encoding that uses ~40% fewer tokens than JSON. Use `--json` when you need structured data to pass to other tools.
 
@@ -165,6 +168,53 @@ determ tags --fields id,name
 ```
 
 Tags are used for filtering mentions with `determ mentions --tag <id>`.
+
+### `determ update-mention`
+
+Tag one or more mentions, mark them as irrelevant (removes from feed), or override their sentiment. Requires a group ID and at least one operation flag. Multiple mentions can be updated in a single call.
+
+> **Tip:** Run `determ groups` to find group IDs, and `determ tags` to find tag IDs before updating.
+
+```bash
+# Apply a tag to a mention
+determ update-mention --group 250240 --mentions "6583047235:web" --tag-id 7905
+
+# Tag multiple mentions at once
+determ update-mention --group 250240 --mentions "6583047235:web,3452284869:instagram" --tag-id 7905
+
+# Mark as irrelevant (removes from feed)
+determ update-mention --group 250240 --mentions "6583047235:web" --irrelevant
+
+# Override sentiment
+determ update-mention --group 250240 --mentions "6583047235:web" --sentiment positive
+
+# Combine: tag + mark irrelevant in one call
+determ update-mention --group 250240 --mentions "6583047235:web" --tag-id 7905 --irrelevant
+
+# Scope to a specific keyword feed (mention appears in multiple feeds)
+determ update-mention --group 250240 --mentions "6583047235:web" --keyword 6798574 --irrelevant
+
+# Raw JSON response
+determ update-mention --group 250240 --mentions "6583047235:web" --tag-id 7905 --json
+```
+
+**Options:**
+
+| Flag | Description |
+|---|---|
+| `--group <id>` | **Required.** Group ID (used in API path) |
+| `--mentions <pairs>` | **Required.** Comma-separated `mentionId:sourceType` pairs (e.g. `"123:web,456:twitter"`) |
+| `--tag-id <id>` | Tag ID to apply to the mention(s) |
+| `--category-id <id>` | Tag category ID (used alongside `--tag-id`) |
+| `--irrelevant` | Mark mention(s) as irrelevant (removes from feed) |
+| `--sentiment <value>` | Override sentiment: `positive` \| `negative` \| `neutral` |
+| `--keyword <id>` | Scope update to one keyword feed |
+
+**Source types for `--mentions`:** `web`, `twitter`, `instagram`, `facebook`, `reddit`, `youtube`, `forum`, `comment`, `disqus`, `vkontakte`, `trip_advisor`
+
+At least one of `--tag-id`, `--irrelevant`, or `--sentiment` must be provided.
+
+---
 
 ## Key concepts
 
