@@ -1,5 +1,5 @@
 ---
-name: determ
+name: determ-cli
 description: Fetch media mentions, list groups/topics, and list tags from the Determ (Mediatoolkit) media monitoring API using the `determ` CLI. Use to discover group and topic IDs, retrieve press coverage, social media mentions, sentiment analysis, and tag listings for PR monitoring workflows.
 user-invocable: true
 metadata:
