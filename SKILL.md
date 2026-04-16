@@ -81,9 +81,12 @@ determ mentions --keyword 6798574 --count 10
 # Paginate through all results
 determ mentions --keyword 6798574 --all
 
-# Filter by date range (ISO 8601 or relative; default window is last 7 days)
+# Filter by publish date (default — correct for PR coverage queries)
 determ mentions --keyword 6798574 --from 7d
 determ mentions --keyword 6798574 --from 2026-04-01 --to 2026-04-15
+
+# Filter by crawl/ingestion date instead
+determ mentions --keyword 6798574 --from 2026-04-01 --to 2026-04-15 --use-feed-time
 
 # Filter by sentiment
 determ mentions --keyword 6798574 --sentiment NEGATIVE
@@ -120,6 +123,7 @@ determ mentions --keyword 6798574 --from 24h --sentiment POSITIVE --count 50 --a
 | `--all` | false | Auto-paginate through all results |
 | `--sort-by <property>` | `FEED_TIME` | `PUBLISHED_TIME` \| `FEED_TIME` \| `REACH` \| `VIRALITY` |
 | `--sort-dir <dir>` | `DESC` | `ASC` \| `DESC` |
+| `--use-feed-time` | false | Filter by crawl/ingestion date instead of publish date |
 
 **Mention fields available for `--fields`:**
 
@@ -218,7 +222,7 @@ At least one of `--tag-id`, `--irrelevant`, or `--sentiment` must be provided.
 
 ## Key concepts
 
-**feedTime vs publishedTime:** `--from`/`--to` filter by `feedTime` (when Determ ingested the mention). This is correct for real-time monitoring. `publishedTime` (when the source originally published) differs for backdated content.
+**feedTime vs publishedTime:** `--from`/`--to` filter by `publishedTime` (when the source originally published) by default — the right axis for PR coverage queries. Use `--use-feed-time` to filter by `feedTime` (when Determ ingested the mention) for real-time monitoring or crawl-date-specific queries. The API requires `feedTime` to be present; when filtering by `publishedTime`, a wide 90-day window is sent automatically.
 
 **Keyword vs Group:** A keyword tracks a specific search term. A group contains multiple keywords. Use `--keyword` for a focused query; use `--group` for all coverage across a campaign.
 
