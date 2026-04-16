@@ -109,6 +109,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             type: 'boolean',
             description: 'Return raw JSON instead of TOON compact format',
           },
+          use_feed_time: {
+            type: 'boolean',
+            description:
+              'Filter by crawl/ingestion date instead of publish date (default: publish date)',
+          },
         },
         required: [],
       },
@@ -218,6 +223,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         sortBy: args.sortBy as string | undefined,
         sortDir: args.sortDir as string | undefined,
         fields: parseFields(args.fields),
+        useFeedTime: args.use_feed_time as boolean | undefined,
         json: args.json as boolean | undefined,
       })
     } else if (name === 'determ_tags') {
