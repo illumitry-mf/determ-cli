@@ -298,7 +298,7 @@ describe('fetchMentions', () => {
       expect(body.query.publishedTime.to).toBe(new Date('2026-04-16T12:00:00Z').getTime())
     })
 
-    it('does not snap relative --to (e.g. 7d)', async () => {
+    it('sets publishedTime when --from is a relative value', async () => {
       await fetchMentions(mockClient, '177561', {
         keyword: '6798574',
         from: '7d',
