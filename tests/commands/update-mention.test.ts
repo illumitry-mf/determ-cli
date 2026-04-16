@@ -57,6 +57,10 @@ describe('parseMentions', () => {
   it('throws on empty string', () => {
     expect(() => parseMentions('')).toThrow()
   })
+
+  it('throws on empty source type', () => {
+    expect(() => parseMentions('123:')).toThrow('"123:"')
+  })
 })
 
 describe('updateMentions', () => {
@@ -201,6 +205,16 @@ describe('updateMentions', () => {
         irrelevant: true,
       })
     ).rejects.toThrow('500 Internal Server Error')
+  })
+
+  it('throws on invalid sentiment value', async () => {
+    await expect(
+      updateMentions(mockClient, '177561', {
+        group: '250240',
+        mentions: '123:web',
+        sentiment: 'INVALID',
+      })
+    ).rejects.toThrow('"INVALID"')
   })
 
   it('omits category_id when categoryId is not provided', async () => {

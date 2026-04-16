@@ -21,6 +21,11 @@ export function parseMentions(mentionsStr: string): MentionRef[] {
     }
     const rawId = part.slice(0, colonIdx)
     const rawType = part.slice(colonIdx + 1)
+    if (!rawType) {
+      throw new Error(
+        `Invalid mention format "${part}" — expected mentionId:sourceType (e.g. "123:web")`
+      )
+    }
     const mentionId = parseInt(rawId, 10)
     if (isNaN(mentionId)) {
       throw new Error(`Invalid mention ID "${rawId}" — must be a number`)
@@ -52,10 +57,13 @@ export async function updateMentions(
   if (options.categoryId) body.category_id = parseInt(options.categoryId, 10)
   if (options.irrelevant) body.irrelevant = true
   if (options.sentiment) {
-    body.sentiment = options.sentiment.toLowerCase() as
-      | 'positive'
-      | 'negative'
-      | 'neutral'
+    const lower = options.sentiment.toLowerCase()
+    if (lower !== 'positive' && lower !== 'negative' && lower !== 'neutral') {
+      throw new Error(
+        `Invalid sentiment "${options.sentiment}" — must be positive, negative, or neutral`
+      )
+    }
+    body.sentiment = lower as 'positive' | 'negative' | 'neutral'
   }
   if (options.keyword) body.keyword_id = parseInt(options.keyword, 10)
 
