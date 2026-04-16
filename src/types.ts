@@ -161,6 +161,7 @@ export interface MentionsOptions {
   fields?: string[]
   sortBy?: string
   sortDir?: string
+  useFeedTime?: boolean
   json?: boolean
 }
 
