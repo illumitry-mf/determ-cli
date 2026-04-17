@@ -44,7 +44,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: 'determ_mentions',
       description:
-        'Fetch media mentions from a Determ keyword or group. Requires at least one of keyword or group. Use determ_groups to find IDs.',
+        'Fetch media mentions from a Determ keyword or group. Requires at least one of keyword or group. Use determ_groups to find IDs. ' +
+        'IMPORTANT: fullText (full article body) is empty by default. If you need to analyse or summarise article content, you MUST include "fullText" in the fields parameter (e.g. fields="id,title,url,fullText,autoSentiment"). Without it you only receive metadata.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -103,7 +104,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           fields: {
             type: 'string',
             description:
-              'Comma-separated fields to return (e.g. "id,title,url,fullText,autoSentiment,reach")',
+              'Comma-separated fields to return. fullText is NOT returned by default — include it explicitly when you need to read or analyse article content (e.g. "id,title,url,fullText,autoSentiment,reach").',
           },
           json: {
             type: 'boolean',
